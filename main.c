@@ -16,15 +16,11 @@ typedef struct _image {
     unsigned int height;
 } Image;
 
-
 int max(int a, int b) {
     if (a > b)
         return a;
     return b;
 }
-
-
-
 
 Image escala_de_cinza(Image img) {
 
@@ -115,6 +111,84 @@ Image cortar_imagem(Image img, int x, int y, int width, int height) {
     return cortada;
 }
 
+Image readPixel(Image image){
+
+  for (unsigned int i = 0; i < image.height; ++i) {
+      for (unsigned int j = 0; j < image.width; ++j) {
+            scanf("%hu %hu %hu", &image.pixel[i][j][0],
+                               &image.pixel[i][j][1],
+                               &image.pixel[i][j][2]);
+
+      }
+  }
+  return image;
+}
+
+Image sepiaFilter(Image img){
+  for (unsigned int x = 0; x < img.height; ++x) {
+      for (unsigned int j = 0; j < img.width; ++j) {
+          unsigned short int pixel[3];
+          pixel[0] = img.pixel[x][j][0];
+          pixel[1] = img.pixel[x][j][1];
+          pixel[2] = img.pixel[x][j][2];
+
+          int p =  pixel[0] * .393 + pixel[1] * .769 + pixel[2] * .189;
+          int menor_r = (255 >  p) ? p : 255;
+          img.pixel[x][j][0] = menor_r;
+
+          p =  pixel[0] * .349 + pixel[1] * .686 + pixel[2] * .168;
+          menor_r = (255 >  p) ? p : 255;
+          img.pixel[x][j][1] = menor_r;
+
+          p =  pixel[0] * .272 + pixel[1] * .534 + pixel[2] * .131;
+          menor_r = (255 >  p) ? p : 255;
+          img.pixel[x][j][2] = menor_r;
+      }
+  }
+
+  return img;
+}
+
+Image mirroringFilter(Image img){
+  int horizontal = 0;
+  scanf("%d", &horizontal);
+
+  int width = img.width, height = img.height;
+
+  if (horizontal == 1){
+
+    width /= 2;
+  }
+  else{
+
+    height /= 2;
+  }
+
+  for (int i2 = 0; i2 < height; ++i2) {
+      for (int j = 0; j < width; ++j) {
+          int x = i2, y = j;
+
+          if (horizontal == 1) y = img.width - 1 - j;
+          else x = img.height - 1 - i2;
+
+          Pixel aux1;
+          aux1.red = img.pixel[i2][j][0];
+          aux1.green = img.pixel[i2][j][1];
+          aux1.blue = img.pixel[i2][j][2];
+
+          img.pixel[i2][j][0] = img.pixel[x][y][0];
+          img.pixel[i2][j][1] = img.pixel[x][y][1];
+          img.pixel[i2][j][2] = img.pixel[x][y][2];
+
+          img.pixel[x][y][0] = aux1.red;
+          img.pixel[x][y][1] = aux1.green;
+          img.pixel[x][y][2] = aux1.blue;
+      }
+  }
+
+
+  return img;
+}
 
 int main() {
     Image img;
@@ -128,14 +202,8 @@ int main() {
     scanf("%u %u %d", &img.width, &img.height, &max_color);
 
     // read all pixels of image
-    for (unsigned int i = 0; i < img.h; ++i) {
-        for (unsigned int j = 0; j < img.w; ++j) {
-            scanf("%hu %hu %hu", &img.pixel[i][j][0],
-                                 &img.pixel[i][j][1],
-                                 &img.pixel[i][j][2]);
 
-        }
-    }
+    img = readPixel(img);
 
     int n_opcoes;
     scanf("%d", &n_opcoes);
@@ -150,26 +218,7 @@ int main() {
                 break;
             }
             case 2: { // Filtro Sepia
-                for (unsigned int x = 0; x < img.height; ++x) {
-                    for (unsigned int j = 0; j < img.width; ++j) {
-                        unsigned short int pixel[3];
-                        pixel[0] = img.pixel[x][j][0];
-                        pixel[1] = img.pixel[x][j][1];
-                        pixel[2] = img.pixel[x][j][2];
-
-                        int p =  pixel[0] * .393 + pixel[1] * .769 + pixel[2] * .189;
-                        int menor_r = (255 >  p) ? p : 255;
-                        img.pixel[x][j][0] = menor_r;
-
-                        p =  pixel[0] * .349 + pixel[1] * .686 + pixel[2] * .168;
-                        menor_r = (255 >  p) ? p : 255;
-                        img.pixel[x][j][1] = menor_r;
-
-                        p =  pixel[0] * .272 + pixel[1] * .534 + pixel[2] * .131;
-                        menor_r = (255 >  p) ? p : 255;
-                        img.pixel[x][j][2] = menor_r;
-                    }
-                }
+                img = sepiaFilter(img);
 
                 break;
             }
@@ -189,35 +238,7 @@ int main() {
                 break;
             }
             case 5: { // Espelhamento
-                int horizontal = 0;
-                scanf("%d", &horizontal);
-
-                int width = img.width, height = img.height;
-
-                if (horizontal == 1) width /= 2;
-                else height /= 2;
-
-                for (int i2 = 0; i2 < h; ++i2) {
-                    for (int j = 0; j < w; ++j) {
-                        int x = i2, y = j;
-
-                        if (horizontal == 1) y = img.width - 1 - j;
-                        else x = img.height - 1 - i2;
-
-                        Pixel aux1;
-                        aux1.red = img.pixel[i2][j][0];
-                        aux1.green = img.pixel[i2][j][1];
-                        aux1.blue = img.pixel[i2][j][2];
-
-                        img.pixel[i2][j][0] = img.pixel[x][y][0];
-                        img.pixel[i2][j][1] = img.pixel[x][y][1];
-                        img.pixel[i2][j][2] = img.pixel[x][y][2];
-
-                        img.pixel[x][y][0] = aux1.red;
-                        img.pixel[x][y][1] = aux1.green;
-                        img.pixel[x][y][2] = aux1.blue;
-                    }
-                }
+                img = mirroringFilter(img);
                 break;
             }
             case 6: { // Inversao de Cores
