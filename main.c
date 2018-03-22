@@ -23,24 +23,13 @@ int max(int a, int b) {
     return b;
 }
 
-int pixel_igual(Pixel p1, Pixel p2) {
-    if (p1.red == p2.red &&
-        p1.green == p2.green &&
-        p1.blue == p2.blue)
-        return 1;
-    return 0;
-}
+
 
 
 Image escala_de_cinza(Image img) {
-    /*for (unsigned int i = 0; i < img.h; ++i) {
-        for (unsigned int j = 0; j < img.w; ++j) {
-            print("%u", img.pixel[i][j][0] + img.pixel[i][j][1] + img.pixel[i][j][2]);
-        }
-    }*/
 
-    for (unsigned int i = 0; i < img.h; ++i) {
-        for (unsigned int j = 0; j < img.w; ++j) {
+    for (unsigned int i = 0; i < img.height; ++i) {
+        for (unsigned int j = 0; j < img.width; ++j) {
             int media = img.pixel[i][j][0] +
                         img.pixel[i][j][1] +
                         img.pixel[i][j][2];
@@ -109,7 +98,7 @@ void inverter_cores(unsigned short int pixel[512][512][3],
     }
 }
 
-Image cortar_imagem(Image img, int x, int y, int w, int h) {
+Image cortar_imagem(Image img, int x, int y, int width, int height) {
     Image cortada;
 
     cortada.width = width;
