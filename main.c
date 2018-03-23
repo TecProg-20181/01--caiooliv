@@ -20,6 +20,15 @@ int max(int a, int b) {
     return b;
 }
 
+int min(int a, int b){
+      if(a < b ){
+        return a;
+      }
+
+      return b;
+
+}
+
 Image grayScale(Image img) {
 
     for (unsigned int i = 0; i < img.height; ++i) {
@@ -43,8 +52,8 @@ Image blur(Image img, int T) {
         for (unsigned int j = 0; j < img.width; ++j) {
             Pixel media = {0, 0, 0};
 
-            int min_h = (img.height - 1 > i + T/2) ? i + T/2 : img.height - 1;
-            int min_w = (img.width - 1 > j + T/2) ? j + T/2 : img.width - 1;
+            int min_h = min(img.height - 1, i + T/2);
+            int min_w = min(img.width - 1, j + T/2);
 
             int x = max(0,i - T/2);
             int y = max(0, j - T/2);
@@ -139,15 +148,15 @@ Image sepiaFilter(Image img){
           pixel[2] = img.pixel[x][j].blue;
 
           int p =  pixel[0] * .393 + pixel[1] * .769 + pixel[2] * .189;
-          int menor_r = (255 >  p) ? p : 255;
+          int menor_r = min(PIXEL_SIZE,p);
           img.pixel[x][j].red = menor_r;
 
           p =  pixel[0] * .349 + pixel[1] * .686 + pixel[2] * .168;
-          menor_r = (255 >  p) ? p : 255;
+          menor_r = min(PIXEL_SIZE,p);
           img.pixel[x][j].green = menor_r;
 
           p =  pixel[0] * .272 + pixel[1] * .534 + pixel[2] * .131;
-          menor_r = (255 >  p) ? p : 255;
+          menor_r = min(PIXEL_SIZE,p);
           img.pixel[x][j].blue = menor_r;
       }
   }
@@ -282,10 +291,8 @@ int main() {
                 img = cropImage(img, x, y, width, height);
 
                 break;
-
             }
         }
-
     }
 
     // print type of image
